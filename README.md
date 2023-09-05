@@ -7,19 +7,24 @@ Requires the environment variable `OPENAI_API_KEY` which should contain your Ope
 ## Usage
 Make changes to `src/index.ts` to design system prompts. Build and run the app to chat to the LLM in your console. Currently the model used is `gpt-3.5-turbo`.
 
-Build the thing
+### Changing prompts
+Make changes to the file `/src/index.ts`.
+```TypeScript
+  llm.setSystemMessage("you are a helpful assistant");
+```
+
+### Build the thing
 ```zsh
   pnpm run build
 ```
 
-Run the thing
+### Run the thing
 ```zsh
   pnpm run start
 ```
 
-Commands
-
-Quit the session
+### Commands
+#### Quit the session
 ```
 > /q 
 > /quit
