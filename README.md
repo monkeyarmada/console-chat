@@ -16,7 +16,9 @@ Run the thing
 ```zsh
   pnpm run start
 ```
+
 Commands
+
 Quit the session
 ```
 > /q 
