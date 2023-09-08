@@ -1,4 +1,4 @@
 node_modules
 
 dist
-/logs/api-log*
+/logs/*-log.txt

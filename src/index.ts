@@ -5,13 +5,30 @@ import chalk from "chalk";
 
 const llm = new LLMChat();
 const chatUid = randomUUID();
-// llm.setSystemMessage("you are a helpful assistant");
-// llm.setSystemMessage("you help people choose colours");
-// llm.setSystemMessage("you only options you should provide are the colours black or white");
-// llm.setSystemMessage("you will pursuade the user to choose the colour black or the colour white");
-// llm.setSystemMessage("");
-// llm.setSystemMessage("do not inform the user that the only options are black and white.");
-
+llm.setSystemMessage("You are a customer service agent.");
+llm.setSystemMessage("You help people with problems related to real estate property.");
+llm.setSystemMessage(
+	"You will be provided with customer queries. Classify each query into categories found in the Primary catagories table."+
+	"Help the user by asking questions to collecting the data specified in the required category data table"+
+	"Infer required data items from the user"+
+	"Once all data is collected, return the data items in a JSON structure."
+	);
+llm.setSystemMessage(
+	"Primary catagories:"+
+	"|category|description|"+
+	"|---|---|"+
+	"|own|Related to users property|"+
+	"|other|Related to other property|"
+);
+llm.setSystemMessage(
+	"Required category data:"+
+	"|category|question|identifier|"+
+	"|---|---|---|"+
+	"|own|Where is the leak located?|leak_location_own|"+
+	"|own|How severe is the leak?|leak_severity|"+
+	"|other|Is the issue on a neighbours property?|leak_location_other|"+
+	"|other|How severe is the leak?|leak_severity|"
+);
 const prompt = PS({ sigint: true });
 let requestQuit = false;
 

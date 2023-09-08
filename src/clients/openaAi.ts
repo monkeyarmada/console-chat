@@ -6,8 +6,10 @@ import path from "path";
 
 export class OpenAiClient {
 	private openAiApi;
-	private logFileName: string;
-	private logStream: fs.WriteStream;
+	private completionLogFileName: string;
+	private historyLogFileName: string;
+	private completionsLogStream: fs.WriteStream;
+	private historyLogStream: fs.WriteStream;
 	constructor(
 		openAiApi: OpenAIApi,
 		private configuration: Configuration = new Configuration({
@@ -16,11 +18,15 @@ export class OpenAiClient {
 		private model = "gpt-3.5-turbo",
 	) {
 		this.openAiApi = new OpenAIApi(this.configuration);
-		this.logFileName =  path.join(__dirname, "..","..","logs",`api-log-${randomUUID()}.txt`);
-		this.logStream = fs.createWriteStream(this.logFileName, { flags:"a"});
+		const uuid = randomUUID();
+		this.completionLogFileName =  path.join(__dirname, "..","..","logs",`${uuid}-comp-log.txt`);
+		this.historyLogFileName =  path.join(__dirname, "..","..","logs",`${uuid}-hist-log.txt`);
+		this.completionsLogStream = fs.createWriteStream(this.completionLogFileName, { flags:"a" });
+		this.historyLogStream = fs.createWriteStream(this.historyLogFileName, { flags: "w" });
 	}
-	private writeLog(choices: CreateChatCompletionResponseChoicesInner[]) {
-		this.logStream.write(JSON.stringify(choices)+"\r\n");
+	private writeLog(choices: CreateChatCompletionResponseChoicesInner[], history: Message[]) {
+		this.completionsLogStream.write(JSON.stringify(choices)+"\r\n");
+		this.historyLogStream.write(JSON.stringify(history)+"\r\n");
 	}
 	public async fetchCompletion(chatUid: string, message: string, llmChat: LLMChat): Promise<string> {
 		const history = llmChat.getChatHistory(chatUid);
@@ -31,7 +37,7 @@ export class OpenAiClient {
 		});
     llmChat.toChatHistory(chatUid, { role: "user", content: message});
     const responseText = res.data.choices[0].message?.content;
-		this.writeLog(res.data.choices);
+		this.writeLog(res.data.choices, history);
     llmChat.toChatHistory(chatUid, { role: "assistant", content: responseText });
 		return responseText || "";
 	}
