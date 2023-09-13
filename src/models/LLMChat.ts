@@ -2,6 +2,7 @@ import {
 	ChatCompletionResponseMessage,
 	ChatCompletionResponseMessageRoleEnum,
 	OpenAIApi,
+	ChatCompletionFunctions,
 } from "openai";
 import { OpenAiClient } from "../clients/openaAi";
 
@@ -11,9 +12,16 @@ export class LLMChat {
 		private history: Record<string, Message[]> = {},
 		private setupMessages: Message[] = [],
 		private initial = true,
+		private functions: ChatCompletionFunctions[] = [], 
 	) {}
 	public setSystemMessage(message: string): void {
 		this.setupMessages.push({ content: message, role: "system" });
+	}
+	public setFunction(func: ChatCompletionFunctions): void {
+		this.functions.push(func);
+	}
+	public getFunctions(): ChatCompletionFunctions[] {
+		return this.functions;
 	}
 
 	public toChatHistory(
@@ -34,7 +42,7 @@ export class LLMChat {
 		if (typeof this.history[chatUid] === "undefined") {
 			this.history[chatUid] = this.setupMessages;
 		}
-		return await this.client.fetchCompletion(chatUid, message, this);
+		return await this.client.fetchChatCompletion(chatUid, message, this);
 	}
 }
 
